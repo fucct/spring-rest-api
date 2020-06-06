@@ -15,12 +15,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Builder @AllArgsConstructor @NoArgsConstructor
-@Getter @Setter @EqualsAndHashCode(of="id")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of = "id")
 @Entity
 public class Event {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Integer id;
     private String name;
     private String description;
@@ -37,5 +42,17 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus = EventStatus.DRAFT;
 
+    public void update() {
+        if (basePrice == 0 && maxPrice == 0) {
+            free = true;
+        } else {
+            free = false;
+        }
 
+        if (this.location == null || this.location.isBlank()) {
+            this.offline=false;
+        }else{
+            this.offline = true;
+        }
+    }
 }

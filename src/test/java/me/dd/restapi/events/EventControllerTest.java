@@ -56,11 +56,11 @@ public class EventControllerTest {
             .content(objectMapper.writeValueAsString(event)))
             .andDo(print())
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("id").exists())
             .andExpect(header().exists(HttpHeaders.LOCATION))
-            .andExpect(header().string("Content-Type", "application/hal+json"))
-            .andExpect(jsonPath("id").value(Matchers.not(100)))
-            .andExpect(jsonPath("free").value(Matchers.not(true)))
+            .andExpect(header().string("Content-Type", HAL_JSON_VALUE))
+            .andExpect(jsonPath("id").exists())
+            .andExpect(jsonPath("free").value(false))
+            .andExpect(jsonPath("offline").value(true))
             .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
     }
 
