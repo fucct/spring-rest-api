@@ -33,6 +33,41 @@ public class EventControllerTest {
         /*
           만약 Event에 계산되어야 하는 값이 임의로 들어오는 경우를 막으려면 어떻게 해야하는가?
           Ans : Dto를 활용한다.
+          다른 프로퍼티에 대해 무시하지 않고 에러를 리턴하려면..?
+         */
+        EventDto event = EventDto.builder()
+            .name("Spring")
+            .description("REST API Development with Spring")
+            .beginEnrollmentDateTime(LocalDateTime.of(2020, 6, 5, 12, 0))
+            .closeEnrollmentDateTime(LocalDateTime.of(2020, 6, 6, 12, 0))
+            .beginEventDateTime(LocalDateTime.of(2020, 6, 7, 12, 0))
+            .endEventDateTime(LocalDateTime.of(2020, 6, 8, 12, 0))
+            .basePrice(100)
+            .maxPrice(100)
+            .limitOfEnrollment(100)
+            .location("강남역 D2 스타트업 팩토리")
+            .build();
+
+        mockMvc.perform(post("/api/events")
+            .contentType(APPLICATION_JSON_VALUE)
+            .accept(HAL_JSON)
+            .content(objectMapper.writeValueAsString(event)))
+            .andDo(print())
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("id").exists())
+            .andExpect(header().exists(HttpHeaders.LOCATION))
+            .andExpect(header().string("Content-Type", "application/hal+json"))
+            .andExpect(jsonPath("id").value(Matchers.not(100)))
+            .andExpect(jsonPath("free").value(Matchers.not(true)))
+            .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
+    }
+
+    @Test
+    void createEvent_Bad_Request() throws Exception {
+        /*
+          만약 Event에 계산되어야 하는 값이 임의로 들어오는 경우를 막으려면 어떻게 해야하는가?
+          Ans : Dto를 활용한다.
+          다른 프로퍼티에 대해 무시하지 않고 에러를 리턴하려면..?
          */
         Event event = Event.builder()
             .id(100)
@@ -47,22 +82,15 @@ public class EventControllerTest {
             .limitOfEnrollment(100)
             .location("강남역 D2 스타트업 팩토리")
             .free(true)
-            .offline(false)
+            .offline(true)
             .eventStatus(EventStatus.PUBLISHED)
             .build();
-        event.setId(10);
 
         mockMvc.perform(post("/api/events")
             .contentType(APPLICATION_JSON_VALUE)
             .accept(HAL_JSON)
             .content(objectMapper.writeValueAsString(event)))
             .andDo(print())
-            .andExpect(status().isCreated())
-            .andExpect(jsonPath("id").exists())
-            .andExpect(header().exists(HttpHeaders.LOCATION))
-            .andExpect(header().string("Content-Type", "application/hal+json"))
-            .andExpect(jsonPath("id").value(Matchers.not(100)))
-            .andExpect(jsonPath("free").value(Matchers.not(true)))
-            .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
+            .andExpect(status().isBadRequest());
     }
 }
