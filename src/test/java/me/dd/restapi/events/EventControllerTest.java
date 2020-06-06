@@ -68,6 +68,7 @@ public class EventControllerTest {
           만약 Event에 계산되어야 하는 값이 임의로 들어오는 경우를 막으려면 어떻게 해야하는가?
           Ans : Dto를 활용한다.
           다른 프로퍼티에 대해 무시하지 않고 에러를 리턴하려면..?
+          Ans : jackson.deserialization -> fail on 설정
          */
         Event event = Event.builder()
             .id(100)
@@ -91,6 +92,17 @@ public class EventControllerTest {
             .accept(HAL_JSON)
             .content(objectMapper.writeValueAsString(event)))
             .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createEvent_Bad_Request_Empty_input() throws Exception {
+        EventDto eventDto = EventDto.builder().build();
+
+        this.mockMvc.perform(post("/api/events")
+            .contentType(APPLICATION_JSON_VALUE)
+            .accept(HAL_JSON_VALUE)
+            .content(objectMapper.writeValueAsString(eventDto)))
             .andExpect(status().isBadRequest());
     }
 }
