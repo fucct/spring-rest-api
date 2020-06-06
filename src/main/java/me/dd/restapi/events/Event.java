@@ -8,6 +8,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -22,7 +24,7 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode(of = "id")
 @Entity
-public class Event {
+public class Event extends RepresentationModel<Event> {
 
     @Id
     @GeneratedValue
