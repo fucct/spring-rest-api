@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,6 +30,7 @@ public class EventControllerTest {
     ObjectMapper objectMapper;
 
     @Test
+    @DisplayName("정상적인 입력을 받는 경우")
     void createEvent() throws Exception {
         /*
           만약 Event에 계산되어야 하는 값이 임의로 들어오는 경우를 막으려면 어떻게 해야하는가?
@@ -63,6 +65,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @DisplayName("입력받을 수 없는 값을 입력받는 경우")
     void createEvent_Bad_Request() throws Exception {
         /*
           만약 Event에 계산되어야 하는 값이 임의로 들어오는 경우를 막으려면 어떻게 해야하는가?
@@ -96,6 +99,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @DisplayName("빈 입력이 들어오는 경우")
     void createEvent_Bad_Request_Empty_Input() throws Exception {
         EventDto eventDto = EventDto.builder().build();
 
@@ -107,6 +111,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @DisplayName("정상적이지 않은 값이 입력되는 경우")
     void createEvent_Bad_Request_Wrong_Input() throws Exception {
         /*
           만약 Event에 계산되어야 하는 값이 임의로 들어오는 경우를 막으려면 어떻게 해야하는가?
