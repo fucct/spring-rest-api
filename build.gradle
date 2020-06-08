@@ -1,13 +1,18 @@
 plugins {
+    id 'org.asciidoctor.convert' version '1.5.9.2'
     id 'org.springframework.boot' version '2.3.0.RELEASE'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-    id 'org.asciidoctor.convert' version '1.5.8'
     id 'java'
+    id 'eclipse'
 }
 
 group = 'me.dd'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+
+asciidoctor {
+    dependsOn test
+}
 
 configurations {
     compileOnly {
@@ -31,7 +36,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.h2database:h2'
+    testRuntimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -45,7 +50,10 @@ test {
     useJUnitPlatform()
 }
 
-asciidoctor {
-    inputs.dir snippetsDir
-    dependsOn test
+
+bootJar {
+    dependsOn asciidoctor
+    from ("${asciidoctor.outputDir}/html5") {
+        into 'static/docs'
+    }
 }
