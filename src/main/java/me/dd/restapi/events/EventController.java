@@ -21,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -83,6 +84,21 @@ public class EventController {
         }
         EventResource eventResource = new EventResource(event.get());
         eventResource.add(new Link("/docs/index.html#resources-events-get").withRel("profile"));
+        return ResponseEntity.ok(eventResource);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity updateEvent(@PathVariable Integer id, @Valid @RequestBody EventDto eventDto) {
+        Optional<Event> event = eventRepository.findById(id);
+        if (event.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Event persistEvent = event.get();
+        persistEvent.updateEvent(eventDto);
+        Event updatedEvent = eventRepository.save(persistEvent);
+        EventResource eventResource = new EventResource(updatedEvent);
+        eventResource.add(new Link("/docs/index.html#resources-events-put").withRel("profile"));
+
         return ResponseEntity.ok(eventResource);
     }
 

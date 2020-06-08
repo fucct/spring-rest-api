@@ -57,4 +57,9 @@ public class Event extends RepresentationModel<Event> {
             this.offline = true;
         }
     }
+
+    public void updateEvent(EventDto eventDto) {
+        this.name = eventDto.getName();
+        this.description = eventDto.getDescription();
+    }
 }

@@ -251,10 +251,107 @@ public class EventControllerTest {
         var event = this.generateEvent(100);
 
         //When&Then
-        this.mockMvc.perform(get("/api/events/{id}", event.getId()))
+        this.mockMvc.perform(get("/api/events/{id}", 214908))
             .andDo(print())
             .andExpect(status().isNotFound());
     }
+
+    @Test
+    @DisplayName("이벤트 수정")
+    public void updateEvent() throws Exception {
+        // Given
+        Event event = this.generateEvent(100);
+        EventDto eventDto = EventDto.builder()
+            .name("Spring")
+            .description("REST API Development with Spring")
+            .beginEnrollmentDateTime(LocalDateTime.of(2020, 6, 5, 12, 0))
+            .closeEnrollmentDateTime(LocalDateTime.of(2020, 6, 6, 12, 0))
+            .beginEventDateTime(LocalDateTime.of(2020, 6, 7, 12, 0))
+            .endEventDateTime(LocalDateTime.of(2020, 6, 8, 12, 0))
+            .basePrice(100)
+            .maxPrice(100)
+            .limitOfEnrollment(100)
+            .location("강남역 D2 스타트업 팩토리")
+            .build();
+
+        // When && Then
+        this.mockMvc.perform(put("/api/events/{id}", event.getId())
+            .contentType(APPLICATION_JSON_VALUE)
+            .content(objectMapper.writeValueAsString(eventDto)))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("name").value("Spring"))
+            .andExpect(jsonPath("description").value("REST API Development with Spring"))
+            .andExpect(jsonPath("_links.self").exists())
+            .andExpect(jsonPath("_links.profile").exists())
+            .andDo(document("event-update"));
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 이벤트 수정")
+    public void updateNotExistEvent() throws Exception {
+        // Given
+        Event event = this.generateEvent(100);
+        EventDto eventDto = EventDto.builder()
+            .name("Spring")
+            .description("REST API Development with Spring")
+            .beginEnrollmentDateTime(LocalDateTime.of(2020, 6, 5, 12, 0))
+            .closeEnrollmentDateTime(LocalDateTime.of(2020, 6, 6, 12, 0))
+            .beginEventDateTime(LocalDateTime.of(2020, 6, 7, 12, 0))
+            .endEventDateTime(LocalDateTime.of(2020, 6, 8, 12, 0))
+            .basePrice(100)
+            .maxPrice(100)
+            .limitOfEnrollment(100)
+            .location("강남역 D2 스타트업 팩토리")
+            .build();
+
+        // When && Then
+        this.mockMvc.perform(put("/api/events/{id}", 53982750)
+            .contentType(APPLICATION_JSON_VALUE)
+            .content(objectMapper.writeValueAsString(eventDto)))
+            .andDo(print())
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("정상적이지 않은 값으로 이벤트 수정")
+    public void updateInvalidValueEvent() throws Exception {
+        // Given
+        Event event = this.generateEvent(100);
+        EventDto updateEvent = EventDto.builder()
+            .name("")
+            .description(null)
+            .build();
+
+        // When && Then
+        this.mockMvc.perform(put("/api/events/{id}", event.getId())
+            .contentType(APPLICATION_JSON_VALUE)
+            .content(objectMapper.writeValueAsString(updateEvent)))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("불가능한 값으로 이벤트 수정")
+    public void updateNotPossibleValueEvent() throws Exception {
+        // Given
+        Event event = this.generateEvent(100);
+        EventDto updateEvent = EventDto.builder()
+            .name("Spring")
+            .description("REST API Development with Spring")
+            .basePrice(50000)
+            .maxPrice(1000)
+            .build();
+
+        // When && Then
+        this.mockMvc.perform(put("/api/events/{id}", event.getId())
+            .contentType(APPLICATION_JSON_VALUE)
+            .content(objectMapper.writeValueAsString(updateEvent)))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+
 
     private Event generateEvent(int index) {
         Event event = Event.builder()
