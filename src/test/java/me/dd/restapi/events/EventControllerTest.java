@@ -13,33 +13,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import me.dd.restapi.common.RestDocsConfiguration;
+import me.dd.restapi.BaseControllerTest;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@Import(RestDocsConfiguration.class)
-@ActiveProfiles("test")
-public class EventControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
+public class EventControllerTest extends BaseControllerTest {
 
     @Autowired
     EventRepository eventRepository;
@@ -93,8 +74,10 @@ public class EventControllerTest {
                 requestFields(
                     fieldWithPath("name").description("Name of new event"),
                     fieldWithPath("description").description("description of new event"),
-                    fieldWithPath("beginEnrollmentDateTime").description("date time of begin enrollment"),
-                    fieldWithPath("closeEnrollmentDateTime").description("date time of end enrollment"),
+                    fieldWithPath("beginEnrollmentDateTime").description(
+                        "date time of begin enrollment"),
+                    fieldWithPath("closeEnrollmentDateTime").description(
+                        "date time of end enrollment"),
                     fieldWithPath("beginEventDateTime").description("date time of begin event"),
                     fieldWithPath("endEventDateTime").description("date time of end event"),
                     fieldWithPath("location").description("location of new event"),
@@ -110,8 +93,10 @@ public class EventControllerTest {
                     fieldWithPath("id").description("Id of new event"),
                     fieldWithPath("name").description("Name of new event"),
                     fieldWithPath("description").description("description of new event"),
-                    fieldWithPath("beginEnrollmentDateTime").description("date time of begin enrollment"),
-                    fieldWithPath("closeEnrollmentDateTime").description("date time of end enrollment"),
+                    fieldWithPath("beginEnrollmentDateTime").description(
+                        "date time of begin enrollment"),
+                    fieldWithPath("closeEnrollmentDateTime").description(
+                        "date time of end enrollment"),
                     fieldWithPath("beginEventDateTime").description("date time of begin event"),
                     fieldWithPath("endEventDateTime").description("date time of end event"),
                     fieldWithPath("location").description("location of new event"),
@@ -199,17 +184,17 @@ public class EventControllerTest {
             .content(objectMapper.writeValueAsString(event)))
             .andDo(print())
             .andExpect(status().isBadRequest());
-            // .andExpect(jsonPath("$[0].objectName").exists())
-            // .andExpect(jsonPath("$[0].defaultMessage").exists())
-            // .andExpect(jsonPath("$[0].code").exists());
-            // .andExpect(jsonPath("_links.index").exists());
+        // .andExpect(jsonPath("$[0].objectName").exists())
+        // .andExpect(jsonPath("$[0].defaultMessage").exists())
+        // .andExpect(jsonPath("$[0].code").exists());
+        // .andExpect(jsonPath("_links.index").exists());
     }
 
     @Test
     @DisplayName("30개의 이벤트를 10개씩 두번째 페이지 조회하기")
     void queryEvents() throws Exception {
         //Given
-        IntStream.range(0,30).forEach(i->{
+        IntStream.range(0, 30).forEach(i -> {
             this.generateEvent(i);
         });
 
@@ -350,8 +335,6 @@ public class EventControllerTest {
             .andDo(print())
             .andExpect(status().isBadRequest());
     }
-
-
 
     private Event generateEvent(int index) {
         Event event = Event.builder()
